@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func ExampleToJson() {
+func ExampleErr_ToJson() {
 	originalErr := errors.New("original error")
 	describeErr := errors.New("describe error")
 
@@ -15,5 +15,5 @@ func ExampleToJson() {
 	fmt.Printf("%s", err.ToJson())
 
 	// Output:
-	// {"date":"2021-09-12T01:10:30Z","describe":"describe error","file":"output_test.go","function":"ExampleToJson","line":13,"original":"original error"}
+	// {"date":"2021-09-12T01:10:30Z","describe":"describe error","file":"output_test.go","function":"ExampleErr_ToJson","line":13,"original":"original error"}
 }

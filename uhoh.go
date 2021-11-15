@@ -59,7 +59,7 @@ func (e *Err) Error() string {
 	return e.original.Error()
 }
 
-// Unwrap added to help with errors package
+// Unwrap returns the original error
 func (e *Err) Unwrap() error { return e.original }
 
 // Is will check to see if target is the original or describe error

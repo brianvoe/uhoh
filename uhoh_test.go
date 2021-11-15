@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 )
 
 func Example() {
-	// Original error
+	// Errors
 	originalErr := errors.New("original error")
 	describeErr := errors.New("describe error")
 
@@ -28,7 +29,15 @@ func Example() {
 	// describe error
 	// uhoh_test.go
 	// Example
-	// 15
+	// 16
+}
+
+func BenchmarkNew(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		original := errors.New("original")
+		describe := errors.New("describe")
+		New(original, describe)
+	}
 }
 
 func ExampleNew() {
@@ -54,8 +63,19 @@ func ExampleNewStackLevel() {
 	// original error
 }
 
-func ExampleDescribe() {
-	// Original error
+func ExampleErr_Original() {
+	// Errors
+	originalErr := errors.New("original error")
+
+	err := New(originalErr, nil)
+	fmt.Println(err.Error())
+
+	// Output:
+	// original error
+}
+
+func ExampleErr_Describe() {
+	// Errors
 	originalErr := errors.New("original error")
 	describeErr := errors.New("describe error")
 
@@ -64,6 +84,31 @@ func ExampleDescribe() {
 
 	// Output:
 	// describe error
+}
+
+func ExampleErr_Date() {
+	// Errors
+	originalErr := errors.New("original error")
+	describeErr := errors.New("describe error")
+
+	err := New(originalErr, describeErr)
+	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
+	fmt.Println(err.Date())
+
+	// Output:
+	// 2021-09-12 01:20:30 +0000 UTC
+}
+
+func ExampleErr_Unwrap() {
+	// Errors
+	originalErr := errors.New("original error")
+	describeErr := errors.New("describe error")
+
+	err := New(originalErr, describeErr)
+	fmt.Println(err.Unwrap().Error())
+
+	// Output:
+	// original error
 }
 
 func TestIs(t *testing.T) {
