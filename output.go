@@ -7,18 +7,23 @@ import (
 
 // ToJson converts the output to a json string
 func (e *Err) ToJson() []byte {
-	b, _ := json.Marshal(e.errToMapStr())
+	b, _ := json.Marshal(e.ToMapStr())
 	return b
 }
 
-// errToMapStr converts Err to a map[string]interface{}
-func (e *Err) errToMapStr() map[string]interface{} {
-	return map[string]interface{}{
-		"original": e.original.Error(),
-		"describe": e.describe.Error(),
-		"file":     e.file,
-		"function": e.function,
-		"line":     e.line,
-		"date":     e.date.Format(time.RFC3339),
+// ToMapStr converts Err to a map[string]interface{}
+func (e *Err) ToMapStr() map[string]interface{} {
+	m := make(map[string]interface{})
+	if e.original != nil {
+		m["original"] = e.original.Error()
 	}
+	if e.describe != nil {
+		m["describe"] = e.describe.Error()
+	}
+	m["file"] = e.file
+	m["function"] = e.function
+	m["line"] = e.line
+	m["date"] = e.date.Format(time.RFC3339)
+
+	return m
 }
