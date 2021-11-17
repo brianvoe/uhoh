@@ -13,6 +13,10 @@ func (e *Err) ToJson() []byte {
 
 // ToMapStr converts Err to a map[string]interface{}
 func (e *Err) ToMapStr() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+
 	m := make(map[string]interface{})
 	if e.original != nil {
 		m["original"] = e.original.Error()
