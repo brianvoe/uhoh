@@ -3,6 +3,7 @@ package uhoh
 import (
 	"errors"
 	"fmt"
+	"testing"
 	"time"
 )
 
@@ -15,5 +16,12 @@ func ExampleErr_ToJson() {
 	fmt.Printf("%s", err.ToJson())
 
 	// Output:
-	// {"date":"2021-09-12T01:10:30Z","describe":"describe error","file":"output_test.go","function":"ExampleErr_ToJson","line":13,"original":"original error"}
+	// {"date":"2021-09-12T01:10:30Z","describe":"describe error","file":"output_test.go","function":"ExampleErr_ToJson","line":14,"original":"original error"}
+}
+
+func TestToMapStrNil(t *testing.T) {
+	var err *Err
+	if err.ToMapStr() != nil {
+		t.Errorf("ToMapStr() = %v, want %v", err.ToMapStr(), nil)
+	}
 }
