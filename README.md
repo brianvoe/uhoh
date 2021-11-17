@@ -57,7 +57,7 @@ if err != nil {
 ```json
 {
   "original": "open /test.txt: no such file or directory",
-  "describe": "describe error",
+  "describe": "Failed to open file. Please check settings.",
   "file": "file.go",
   "function": "OpenFile",
   "line": 13,
