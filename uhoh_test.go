@@ -86,6 +86,18 @@ func ExampleErr_Describe() {
 	// describe error
 }
 
+func ExampleErr_SetDescribe() {
+	// Errors
+	originalErr := errors.New("original error")
+
+	err := New(originalErr, nil)
+	err.SetDescribe(errors.New("new describe error"))
+	fmt.Println(err.Error())
+
+	// Output:
+	// new describe error
+}
+
 func ExampleErr_Date() {
 	// Errors
 	originalErr := errors.New("original error")

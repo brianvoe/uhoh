@@ -45,6 +45,9 @@ func (e *Err) Original() error { return e.original }
 // Describe will set the describe error
 func (e *Err) Describe() error { return e.describe }
 
+// SetDescribe will set the describe error
+func (e *Err) SetDescribe(describe error) *Err { e.describe = describe; return e }
+
 // Date returns the date/time in which the error was created
 func (e *Err) Date() time.Time { return e.date }
 
