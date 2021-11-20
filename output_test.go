@@ -7,11 +7,23 @@ import (
 	"time"
 )
 
+func ExampleErr_Error() {
+	originalErr := errors.New("original error")
+	describeErr := errors.New("describe error")
+
+	err := New(originalErr).SetDescribe(describeErr).SetType(ErrGeneral)
+	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 10, 30, 0, time.UTC))
+	fmt.Printf("%s", err.Error())
+
+	// Output:
+	// 2021-09-12T01:10:30Z:describe error:original error
+}
+
 func ExampleErr_ToJson() {
 	originalErr := errors.New("original error")
 	describeErr := errors.New("describe error")
 
-	err := New(originalErr, describeErr)
+	err := New(originalErr).SetDescribe(describeErr).SetType(ErrGeneral)
 	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 10, 30, 0, time.UTC))
 	fmt.Printf("%s", err.ToJson())
 

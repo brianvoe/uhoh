@@ -5,6 +5,14 @@ import (
 	"time"
 )
 
+// Error will return the desbribe error if it exists, otherwise the original error
+func (e *Err) Error() string {
+	if e.describeErr != nil {
+		return e.describeErr.Error()
+	}
+	return e.originalErr.Error()
+}
+
 // ToJson converts the output to a json string
 func (e *Err) ToJson() []byte {
 	b, _ := json.Marshal(e.ToMapStr())
@@ -18,15 +26,13 @@ func (e *Err) ToMapStr() map[string]interface{} {
 	}
 
 	m := make(map[string]interface{})
-	if e.original != nil {
-		m["original"] = e.original.Error()
+	if e.originalErr != nil {
+		m["original"] = e.originalErr.Error()
 	}
-	if e.describe != nil {
-		m["describe"] = e.describe.Error()
+	if e.describeErr != nil {
+		m["describe"] = e.describeErr.Error()
 	}
-	m["file"] = e.file
-	m["function"] = e.function
-	m["line"] = e.line
+	m["stack"] = e.stack
 	m["date"] = e.date.Format(time.RFC3339)
 
 	return m
