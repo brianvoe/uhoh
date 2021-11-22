@@ -2,5 +2,5 @@
     "go.coverOnSave": true,
     "go.coverOnSingleTest": true,
     "go.coverOnSingleTestFile": true,
-    "go.coverShowCounts": true
+    "go.coverShowCounts": false
 }

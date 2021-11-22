@@ -1,25 +1,56 @@
 package uhoh
 
 import (
+	"fmt"
 	"runtime"
 	"strings"
 )
 
-// File is the runtime.Frame.File stripped down to just the filename
-func (e *Err) File() string { return e.file }
+// stackDepth returns the number of frames in the stack
+var stackDepth = 3
 
-// Function is the runtime.Frame.Function stripped down to just the function name
-func (e *Err) Function() string { return e.function }
+// SetStackDepth sets the number of frames to skip when creating the stack
+func SetStackDepth(depth int) { stackDepth = depth }
 
-// Line is the line of the runtime.Frame and exposed for convenience.
-func (e *Err) Line() int { return e.line }
+// Frame contains the file, function, line of the stack trace
+type Frame struct {
+	File     string `json:"file"`
+	Function string `json:"function"`
+	Line     int    `json:"line"`
+}
 
-// stackLevel returns a stack Frame skipping the number of supplied frames.
-// This is primarily used by other libraries who use this package
-// internally as the additional.
-func stackLevel(skip int) (file, function string, line int) {
-	var frame [3]uintptr
-	runtime.Callers(skip+2, frame[:])
-	rf, _ := runtime.CallersFrames(frame[:]).Next()
-	return rf.File[strings.LastIndexByte(rf.File, '/')+1:], rf.Function[strings.LastIndexByte(rf.Function, '.')+1:], rf.Line
+// FirstFrame is the runtime.Frame.File stripped down to just the filename
+func (e *Err) FirstFrame() *Frame { return &e.Stack[0] }
+
+// String returns the stack as a string
+func (s *Frame) String() string {
+	return fmt.Sprintf("%s:%d %s", s.File, s.Line, s.Function)
+}
+
+// stackInfo returns []stack Frame skipping the number of supplied frames.
+func stackInfo(skip int) []Frame {
+	pc := make([]uintptr, stackDepth)
+	_ = runtime.Callers(skip+2, pc)
+
+	frames := runtime.CallersFrames(pc)
+
+	var stack []Frame
+	for {
+		rf, hasMore := frames.Next()
+		stack = append(stack, *frameDetails(rf))
+
+		if !hasMore {
+			break
+		}
+	}
+
+	return stack
+}
+
+func frameDetails(rf runtime.Frame) *Frame {
+	return &Frame{
+		File:     rf.File[strings.LastIndexByte(rf.File, '/')+1:],
+		Function: rf.Function[strings.LastIndexByte(rf.Function, '.')+1:],
+		Line:     rf.Line,
+	}
 }
