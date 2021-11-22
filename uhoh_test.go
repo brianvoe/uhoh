@@ -47,10 +47,11 @@ func ExampleNew() {
 	originalErr := errors.New("original error")
 
 	err := New(originalErr)
+	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
 	fmt.Println(err.Error())
 
 	// Output:
-	// original error
+	// 2021-09-12T01:20:30Z | original error
 }
 
 func ExampleNewStackLevel() {
@@ -59,18 +60,19 @@ func ExampleNewStackLevel() {
 
 	// Create error with stack level
 	err := NewStackLevel(originalErr, 1)
+	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
 	fmt.Println(err.Error())
 
 	// Output:
-	// original error
+	// 2021-09-12T01:20:30Z | original error
 }
 
 func ExampleErr_Original() {
-	// Errors
+	// Original error
 	originalErr := errors.New("original error")
 
 	err := New(originalErr)
-	fmt.Println(err.Error())
+	fmt.Println(err.Original)
 
 	// Output:
 	// original error
@@ -82,21 +84,21 @@ func ExampleErr_Describe() {
 	describeErr := errors.New("describe error")
 
 	err := New(originalErr).SetDescribe(describeErr)
-	fmt.Println(err.Error())
+	fmt.Println(err.Describe)
 
 	// Output:
 	// describe error
 }
 
 func ExampleErr_Type() {
-	// Errors
+	// Original error
 	originalErr := errors.New("original error")
 
 	err := New(originalErr).SetType(ErrGeneral)
 	fmt.Println(err.Type)
 
 	// Output:
-	// uhoh
+	// general error
 }
 
 func ExampleErr_SetDescribe() {
@@ -105,7 +107,7 @@ func ExampleErr_SetDescribe() {
 
 	err := New(originalErr)
 	err.SetDescribe(errors.New("new describe error"))
-	fmt.Println(err.Error())
+	fmt.Println(err.Describe)
 
 	// Output:
 	// new describe error

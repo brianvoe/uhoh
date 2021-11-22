@@ -2,7 +2,6 @@ package uhoh
 
 import (
 	"encoding/json"
-	"errors"
 	"strings"
 	"time"
 )
@@ -31,49 +30,14 @@ var defaultErrorFormat = func(err *Err) string {
 }
 
 // SetDefaultErrorFormatter sets the defaultErrorFormatter function
-func SetDefaultErrorFormatter(f func(err *Err) string) {
-	defaultErrorFormat = f
+func SetDefaultErrorFormatter(function func(err *Err) string) {
+	defaultErrorFormat = function
 }
 
 // Error will return the date, type error(if set) original error and describe error(if set)
 // as a string in the default error format
 func (e *Err) Error() string {
 	return defaultErrorFormat(e)
-}
-
-// Create MarshalJSON method to handle the json.Marshal for all fields
-func (e *Err) MarshalJSON() ([]byte, error) {
-	return json.Marshal(e.ToMapStr())
-}
-
-// Create UnmarshalJSON method to handle the json.Unmarshal
-func (e *Err) UnmarshalJSON(b []byte) error {
-	var m map[string]interface{}
-	if err := json.Unmarshal(b, &m); err != nil {
-		return err
-	}
-
-	if typeErr, ok := m["type"]; ok {
-		e.Type = errors.New(typeErr.(string))
-	}
-	if originalErr, ok := m["original"]; ok {
-		e.Original = errors.New(originalErr.(string))
-	}
-	if describeErr, ok := m["describe"]; ok {
-		e.Describe = errors.New(describeErr.(string))
-	}
-	if stack, ok := m["stack"]; ok {
-		e.Stack = stack.([]Frame)
-	}
-	if date, ok := m["date"]; ok {
-		var err error
-		e.Date, err = time.Parse(time.RFC3339, date.(string))
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // ToJson converts the output to a json string

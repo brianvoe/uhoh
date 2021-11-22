@@ -43,7 +43,7 @@ func TestStack(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := tt.err.FirstStack()
+			s := tt.err.FirstFrame()
 
 			if s.File != tt.file {
 				t.Errorf("TestStack File = %s, want %s", s.File, tt.file)
@@ -58,5 +58,24 @@ func TestStack(t *testing.T) {
 				t.Errorf("Stack.String() = %v, want %v", s.String(), tt.str)
 			}
 		})
+	}
+}
+
+func TestSetStackDepth(t *testing.T) {
+	ogStackDepth := stackDepth
+
+	SetStackDepth(2)
+	defer SetStackDepth(ogStackDepth)
+
+	err := New(errors.New("original error"))
+
+	// Test that the stack depth is set correctly
+	if stackDepth != 2 {
+		t.Error("Stack depth was not set correctly")
+	}
+
+	// Test that the stack in Err is the correct length
+	if len(err.Stack) != 2 {
+		t.Error("Stack was not set correctly")
 	}
 }

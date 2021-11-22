@@ -1,7 +1,6 @@
 package uhoh
 
 import (
-	"encoding/json"
 	"fmt"
 	"runtime"
 	"strings"
@@ -20,27 +19,8 @@ type Frame struct {
 	Line     int    `json:"line"`
 }
 
-// Create MarshalJSON for Frame for all fields
-func (f *Frame) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("{\"file\":\"%s\",\"function\":\"%s\",\"line\":%d}", f.File, f.Function, f.Line)), nil
-}
-
-// Create UnmarshalJSON for Frame for all fields
-func (f *Frame) UnmarshalJSON(b []byte) error {
-	var m map[string]interface{}
-	if err := json.Unmarshal(b, &m); err != nil {
-		return err
-	}
-
-	f.File = m["file"].(string)
-	f.Function = m["function"].(string)
-	f.Line = int(m["line"].(float64))
-
-	return nil
-}
-
 // FirstFrame is the runtime.Frame.File stripped down to just the filename
-func (e *Err) FirstStack() Frame { return e.Stack[0] }
+func (e *Err) FirstFrame() *Frame { return &e.Stack[0] }
 
 // String returns the stack as a string
 func (s *Frame) String() string {
