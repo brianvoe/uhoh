@@ -45,14 +45,14 @@ func TestStack(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := tt.err.FirstStack()
 
-			if s.File() != tt.file {
-				t.Errorf("TestStack File() = %s, want %s", s.File(), tt.file)
+			if s.File != tt.file {
+				t.Errorf("TestStack File = %s, want %s", s.File, tt.file)
 			}
-			if s.Function() != tt.function {
-				t.Errorf("TestStack Function() = %s, want %s", s.Function(), tt.function)
+			if s.Function != tt.function {
+				t.Errorf("TestStack Function = %s, want %s", s.Function, tt.function)
 			}
-			if s.Line() != tt.line {
-				t.Errorf("TestStack Line() = %d, want %d", s.Line(), tt.line)
+			if s.Line != tt.line {
+				t.Errorf("TestStack Line = %d, want %d", s.Line, tt.line)
 			}
 			if s.String() != tt.str {
 				t.Errorf("Stack.String() = %v, want %v", s.String(), tt.str)

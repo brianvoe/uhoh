@@ -17,19 +17,20 @@ func Example() {
 	err.SetDescribe(describeErr)
 	err.SetType(ErrGeneral)
 
+	// Can set date if need be
+	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
+
 	// Output info
 	fmt.Println(err.Error()) // Will prioritize describe error
-	fmt.Println(err.Original())
-	fmt.Println(err.Describe())
-	fmt.Println(err.Stack())
+	fmt.Println(err.Original)
+	fmt.Println(err.Describe)
+	fmt.Println(err.Stack)
 
 	// Output:
-	// describe error
+	// 2021-09-12T01:20:30Z | general error | original error | describe error
 	// original error
 	// describe error
-	// uhoh_test.go
-	// Example
-	// 16
+	// [{uhoh_test.go Example 16} {run_example.go runExample 64} {example.go runExamples 44}]
 }
 
 func BenchmarkNew(b *testing.B) {
@@ -92,7 +93,7 @@ func ExampleErr_Type() {
 	originalErr := errors.New("original error")
 
 	err := New(originalErr).SetType(ErrGeneral)
-	fmt.Println(err.Type())
+	fmt.Println(err.Type)
 
 	// Output:
 	// uhoh
@@ -116,7 +117,7 @@ func ExampleErr_Date() {
 
 	err := New(originalErr)
 	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
-	fmt.Println(err.Date())
+	fmt.Println(err.Date)
 
 	// Output:
 	// 2021-09-12 01:20:30 +0000 UTC
