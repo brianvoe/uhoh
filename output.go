@@ -41,7 +41,7 @@ func (e *Err) Error() string {
 }
 
 // ToJson converts the output to a json string
-func (e *Err) ToJson() []byte {
+func (e *Err) ToJSON() []byte {
 	b, _ := json.Marshal(e.ToMapStr())
 	return b
 }

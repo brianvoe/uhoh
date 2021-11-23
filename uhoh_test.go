@@ -3,6 +3,7 @@ package uhoh
 import (
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 )
@@ -21,7 +22,7 @@ func Example() {
 	err.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
 
 	// Output info
-	fmt.Println(err.Error()) // Will prioritize describe error
+	fmt.Println(err.Error())
 	fmt.Println(err.Original)
 	fmt.Println(err.Describe)
 	fmt.Println(err.Stack)
@@ -30,7 +31,20 @@ func Example() {
 	// 2021-09-12T01:20:30Z | general error | original error | describe error
 	// original error
 	// describe error
-	// [{uhoh_test.go Example 16} {run_example.go runExample 64} {example.go runExamples 44}]
+	// [{uhoh_test.go Example 17} {run_example.go runExample 64} {example.go runExamples 44}]
+}
+
+func Example_realWorld() {
+	_, err := os.Open("/test.txt")
+	if err != nil {
+		uhohErr := New(err).SetDescribe(errors.New("Failed to open file. Please check settings."))
+		uhohErr.SetDate(time.Date(2021, time.Month(9), 12, 1, 20, 30, 0, time.UTC))
+
+		fmt.Printf("%s", uhohErr.ToJSON())
+	}
+
+	// Output:
+	// {"date":"2021-09-12T01:20:30Z","describe":"Failed to open file. Please check settings.","original":"open /test.txt: no such file or directory","stack":[{"file":"uhoh_test.go","function":"Example_realWorld","line":40},{"file":"run_example.go","function":"runExample","line":64},{"file":"example.go","function":"runExamples","line":44}]}
 }
 
 func BenchmarkNew(b *testing.B) {
@@ -135,6 +149,21 @@ func ExampleErr_Unwrap() {
 
 	// Output:
 	// original error
+}
+
+func TestNewPassInExistingErr(t *testing.T) {
+	// Create first uhoh error
+	original := errors.New("original")
+	describe := errors.New("describe")
+	firstErr := New(original).SetDescribe(describe).SetType(ErrGeneral)
+
+	// Create second uhoh error and pass in first uhoh error
+	secondErr := New(firstErr)
+
+	// Check if second uhoh error is the same as first uhoh error
+	if firstErr.Date.Format(time.RFC3339) != secondErr.Date.Format(time.RFC3339) {
+		t.Errorf("Date should be the same")
+	}
 }
 
 func TestIs(t *testing.T) {

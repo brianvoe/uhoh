@@ -25,6 +25,11 @@ func New(err error) *Err {
 
 // NewStackLevel will return an initialized error with a stack trace at certain level
 func NewStackLevel(err error, level int) *Err {
+	// Check if error is already an uhoh.Err
+	if e, ok := err.(*Err); ok {
+		return e
+	}
+
 	return &Err{
 		Original: err,
 		Stack:    stackInfo(level),
