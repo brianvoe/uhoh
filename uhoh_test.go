@@ -151,6 +151,21 @@ func ExampleErr_Unwrap() {
 	// original error
 }
 
+func TestNewPassInExistingErr(t *testing.T) {
+	// Create first uhoh error
+	original := errors.New("original")
+	describe := errors.New("describe")
+	firstErr := New(original).SetDescribe(describe).SetType(ErrGeneral)
+
+	// Create second uhoh error and pass in first uhoh error
+	secondErr := New(firstErr)
+
+	// Check if second uhoh error is the same as first uhoh error
+	if firstErr.Date.Format(time.RFC3339) != secondErr.Date.Format(time.RFC3339) {
+		t.Errorf("Date should be the same")
+	}
+}
+
 func TestIs(t *testing.T) {
 	original := errors.New("original")
 	describe := errors.New("describe")
