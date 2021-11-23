@@ -1,6 +1,7 @@
 package uhoh
 
 import (
+	"errors"
 	"time"
 )
 
@@ -23,6 +24,11 @@ func New(err error) *Err {
 	return NewStackLevel(err, 2)
 }
 
+// NewStr will return an intialized error with a stack trace level
+func NewStr(err string) *Err {
+	return NewStackLevel(errors.New(err), 2)
+}
+
 // NewStackLevel will return an initialized error with a stack trace at certain level
 func NewStackLevel(err error, level int) *Err {
 	// Check if error is already an uhoh.Err
@@ -40,8 +46,14 @@ func NewStackLevel(err error, level int) *Err {
 // SetDescribe will set the describe error
 func (e *Err) SetDescribe(describe error) *Err { e.Describe = describe; return e }
 
+// SetDescribeStr will set the describe error from a string
+func (e *Err) SetDescribeStr(describe string) *Err { e.Describe = errors.New(describe); return e }
+
 // SetType will set the type error
 func (e *Err) SetType(target error) *Err { e.Type = target; return e }
+
+// SetTypeStr will set the type error from a string
+func (e *Err) SetTypeStr(target string) *Err { e.Type = errors.New(target); return e }
 
 // SetDate will set the date/time in which the error was created
 func (e *Err) SetDate(date time.Time) *Err { e.Date = date; return e }
