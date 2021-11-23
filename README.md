@@ -47,16 +47,37 @@ fmt.Println(err.Stack)
 // [{uhoh_test.go Example 16} {run_example.go runExample 64} {example.go runExamples 44}]
 ```
 
+## Using With Str
+
+In order to simplify the use of uhoh, uhoh has Str equivalents for set methods so you dont have to always initiate an errors.New().
+
+```go
+// Create error
+err := uhoh.NewStr("original error")
+err.SetDescribeStr("describe error")
+err.SetTypeStr("general error")
+
+// Output info
+fmt.Println(err.Error())
+fmt.Println(err.Stack)
+
+// Output:
+// 2021-09-12T01:20:30Z | general error | original error | describe error
+// [{uhoh_test.go Example 16} {run_example.go runExample 64} {example.go runExamples 44}]
+```
+
 ## Real World Usage
 
 To give you a better understanding of how uhoh works, let's look at a real world example
 
 ```go
+var fileErrType = errors.New("file error")
+
 _, err := os.Open("/test.txt")
 if err != nil {
     uhohErr := uhoh.New(err)
     uhohErr.SetDescribe(errors.New("Failed to open file. Please check settings."))
-    uhohErr.SetType(errors.New("file error"))
+    uhohErr.SetType(fileErrType)
 
     // Lets log out all the uhoh fields
     log.Printf("%s", uhohErr.ToJson())
@@ -65,22 +86,22 @@ if err != nil {
 
 ```json
 {
-  "original":"open /test.txt: no such file or directory",
-  "describe":"Failed to open file. Please check settings.",
-  "type":"file error",
-  "stack":[
-    {"file":"uhoh_test.go","function":"Example_realWorld","line":40},
-    {"file":"run_example.go","function":"runExample","line":64},
-    {"file":"example.go","function":"runExamples","line":44}
+  "original": "open /test.txt: no such file or directory",
+  "describe": "Failed to open file. Please check settings.",
+  "type": "file error",
+  "stack": [
+    { "file": "uhoh_test.go", "function": "Example_realWorld", "line": 40 },
+    { "file": "run_example.go", "function": "runExample", "line": 64 },
+    { "file": "example.go", "function": "runExamples", "line": 44 }
   ],
-  "date":"2021-09-12T01:20:30Z"
+  "date": "2021-09-12T01:20:30Z"
 }
 ```
 
 ## Type for Is checking
 
-You may want to check if an error is of a certain type. 
-Uhoh has a list of types that you can use to check if an error is of a certain type. 
+You may want to check if an error is of a certain type.
+Uhoh has a list of types that you can use to check if an error is of a certain type.
 Otherwise you can set your own internal types.
 
 ```go
