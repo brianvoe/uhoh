@@ -58,7 +58,7 @@ func TestErr_ErrorNil(t *testing.T) {
 	}
 }
 
-func ExampleErr_ToJson() {
+func ExampleErr_ToJSON() {
 	originalErr := errors.New("original error")
 	describeErr := errors.New("describe error")
 
@@ -67,7 +67,7 @@ func ExampleErr_ToJson() {
 	fmt.Printf("%s", err.ToJSON())
 
 	// Output:
-	// {"date":"2021-09-12T01:10:30Z","describe":"describe error","original":"original error","stack":[{"file":"output_test.go","function":"ExampleErr_ToJson","line":65},{"file":"run_example.go","function":"runExample","line":64},{"file":"example.go","function":"runExamples","line":44}],"type":"general error"}
+	// {"date":"2021-09-12T01:10:30Z","describe":"describe error","original":"original error","stack":[{"file":"output_test.go","function":"ExampleErr_ToJSON","line":65},{"file":"run_example.go","function":"runExample","line":64},{"file":"example.go","function":"runExamples","line":44}],"type":"general error"}
 }
 
 func TestToMapStrNil(t *testing.T) {
