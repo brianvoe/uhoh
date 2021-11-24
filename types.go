@@ -5,8 +5,9 @@ import (
 )
 
 var (
-	ErrGeneral  = errors.New("general error")
-	ErrNotFound = errors.New("not found error")
+	ErrGeneral    = errors.New("general error")
+	ErrBadRequest = errors.New("bad request error")
+	ErrNotFound   = errors.New("not found error")
 
 	// Data checking
 	ErrValidation = errors.New("validation error")
