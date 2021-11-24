@@ -15,6 +15,10 @@ func TestError_Types(t *testing.T) {
 			typeErr: ErrGeneral,
 		},
 		{
+			err:     New(errors.New("the request of not correct")).SetType(ErrBadRequest),
+			typeErr: ErrBadRequest,
+		},
+		{
 			err:     New(errors.New("validation of payment method failed")).SetType(ErrValidation),
 			typeErr: ErrValidation,
 		},
