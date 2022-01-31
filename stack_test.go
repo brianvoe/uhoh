@@ -61,6 +61,46 @@ func TestStack(t *testing.T) {
 	}
 }
 
+func TestFirstFrameZeroFrameStackDepth(t *testing.T) {
+	ogStackDepth := stackDepth
+
+	SetStackDepth(0)
+	defer SetStackDepth(ogStackDepth)
+
+	err := New(errors.New("original error"))
+
+	ff := err.FirstFrame()
+	if ff != nil {
+		t.Error("FirstFrame should be nil")
+	}
+
+	// Test that the stack in Err is the correct length
+	if len(err.Stack) != 0 {
+		t.Error("Stack was not set correctly")
+	}
+}
+
+func TestStackLevelHigherThanStackDepth(t *testing.T) {
+	err := NewStackLevel(errors.New("original error"), 10)
+
+	// Test that stack is empty
+	if len(err.Stack) != 0 {
+		t.Error("Stack was not set correctly")
+	}
+
+	// Try to grab the first frame
+	ff := err.FirstFrame()
+	if ff != nil {
+		t.Error("FirstFrame should be nil")
+	}
+
+	// Get string representation of the stack
+	str := err.FirstFrame().String()
+	if str != "" {
+		t.Error("Stack was not set correctly")
+	}
+}
+
 func TestSetStackDepth(t *testing.T) {
 	ogStackDepth := stackDepth
 
@@ -77,5 +117,25 @@ func TestSetStackDepth(t *testing.T) {
 	// Test that the stack in Err is the correct length
 	if len(err.Stack) != 2 {
 		t.Error("Stack was not set correctly")
+	}
+}
+
+// TestLargeStackDepth - Testing if the stack depth is set larger than the amount of stack frames there are
+func TestLargeStackDepth(t *testing.T) {
+	ogStackDepth := stackDepth
+
+	SetStackDepth(10)
+	defer SetStackDepth(ogStackDepth)
+
+	err := New(errors.New("original error"))
+
+	// Test that the stack depth is set correctly
+	if stackDepth != 10 {
+		t.Error("Stack depth was not set correctly")
+	}
+
+	// Test that the stack in Err is the correct length
+	if len(err.Stack) > 5 {
+		t.Errorf("Stack was not set correctly. Depth %d", len(err.Stack))
 	}
 }
