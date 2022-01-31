@@ -20,11 +20,22 @@ type Frame struct {
 }
 
 // FirstFrame is the runtime.Frame.File stripped down to just the filename
-func (e *Err) FirstFrame() *Frame { return &e.Stack[0] }
+func (e *Err) FirstFrame() *Frame {
+	// Deal with the case where the stack is empty
+	if len(e.Stack) == 0 {
+		return nil
+	}
+
+	return &e.Stack[0]
+}
 
 // String returns the stack as a string
-func (s *Frame) String() string {
-	return fmt.Sprintf("%s:%d %s", s.File, s.Line, s.Function)
+func (f *Frame) String() string {
+	if f == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%s:%d %s", f.File, f.Line, f.Function)
 }
 
 // stackInfo returns []stack Frame skipping the number of supplied frames.
@@ -37,7 +48,10 @@ func stackInfo(skip int) []Frame {
 	var stack []Frame
 	for {
 		rf, hasMore := frames.Next()
-		stack = append(stack, *frameDetails(rf))
+		fd := frameDetails(rf)
+		if fd != nil {
+			stack = append(stack, *fd)
+		}
 
 		if !hasMore {
 			break
@@ -48,9 +62,16 @@ func stackInfo(skip int) []Frame {
 }
 
 func frameDetails(rf runtime.Frame) *Frame {
+	file := rf.File[strings.LastIndexByte(rf.File, '/')+1:]
+	function := rf.Function[strings.LastIndexByte(rf.Function, '.')+1:]
+	line := rf.Line
+	if file == "" || function == "" || line == 0 {
+		return nil
+	}
+
 	return &Frame{
-		File:     rf.File[strings.LastIndexByte(rf.File, '/')+1:],
-		Function: rf.Function[strings.LastIndexByte(rf.Function, '.')+1:],
-		Line:     rf.Line,
+		File:     file,
+		Function: function,
+		Line:     line,
 	}
 }
